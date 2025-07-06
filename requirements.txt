@@ -1,0 +1,15 @@
+asgiref==3.8.1
+autopep8==2.3.2
+dj-database-url==3.0.1
+Django==5.1.1
+django-extensions==3.2.3
+django-silk==5.4.0
+djangorestframework==3.15.2
+gprof2dot==2025.4.14
+pillow==10.4.0
+psycopg==3.2.9
+psycopg-binary==3.2.9
+pycodestyle==2.14.0
+python-dotenv==1.1.1
+sqlparse==0.5.1
+tzdata==2024.2
