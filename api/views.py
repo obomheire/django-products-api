@@ -14,18 +14,19 @@ Class Base Generic Views
 """
 
 
-class ProductListAPIView(generics.ListAPIView):
-    # queryset = Product.objects.all() # Return all products
-    # queryset = Product.objects.exclude(
-    #     stock__gt=0
-    # )  # Return products that are out of stock i.e where stock is 0
-    queryset = Product.objects.filter(stock__gt=0)  # Return products where stock is > 0
-    serializer_class = ProductSerializer
+# # Use for Listing all products
+# class ProductListAPIView(generics.ListAPIView):
+#     # queryset = Product.objects.all() # Return all products
+#     # queryset = Product.objects.exclude(
+#     #     stock__gt=0
+#     # )  # Return products that are out of stock i.e where stock is 0
+#     queryset = Product.objects.filter(stock__gt=0)  # Return products where stock is > 0
+#     serializer_class = ProductSerializer
 
+# Use for Listing andf creating products
 class ProductListCreateAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-
 
 
 class ProductDetailAPIView(generics.RetrieveAPIView):
