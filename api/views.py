@@ -2,10 +2,16 @@ from django.db.models import Max
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from api.models import Order, OrderItem, Product
 from api.serializers import OrderSerializer, ProductInfoSerializer, ProductSerializer
+
+"""
+Class Base Generic Views
+"""
 
 
 class ProductListAPIView(generics.ListAPIView):
@@ -29,31 +35,30 @@ class OrderListAPIView(generics.ListAPIView):
 
 
 class UserOrderListAPIView(generics.ListAPIView):
-    # Base queryset for all orders, with optimization to reduce database hits
-    # - "items__product": preloads each product in the order items
-    # - "user": preloads the user related to each order
     queryset = Order.objects.prefetch_related("items__product", "user")
-
-    # Serializer used to convert Order instances into JSON
     serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated]
 
     # Override get_queryset to filter orders by the current user
     def get_queryset(self):
-        # Start with the base queryset defined above
-        qs = super().get_queryset()
+        qs = super().get_queryset()  ## Start with the base queryset defined above
 
-        # Return only the orders that belong to the logged-in user
         return qs.filter(user=self.request.user)
 
 
-@api_view(["GET"])
-def product_info(request):
-    products = Product.objects.all()
-    serializer = ProductInfoSerializer(
-        {
-            "products": products,
-            "count": len(products),
-            "max_price": products.aggregate(max_price=Max("price"))["max_price"],
-        }
-    )
-    return Response(serializer.data)
+"""
+Class Base API View
+"""
+
+
+class ProductInfoAPIView(APIView):
+    def get(self, request):
+        products = Product.objects.all()
+        serializer = ProductInfoSerializer(
+            {
+                "products": products,
+                "count": len(products),
+                "max_price": products.aggregate(max_price=Max("price"))["max_price"],
+            }
+        )
+        return Response(serializer.data)
