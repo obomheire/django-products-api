@@ -45,9 +45,7 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
-    # order_item_id = models.UUIDField(
-    #     default=uuid.uuid4, editable=False, null=True, blank=True
-    # )
+    order_item_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     order = models.ForeignKey(
         Order,
         on_delete=models.CASCADE,
