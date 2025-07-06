@@ -28,6 +28,24 @@ class OrderListAPIView(generics.ListAPIView):
     serializer_class = OrderSerializer
 
 
+class UserOrderListAPIView(generics.ListAPIView):
+    # Base queryset for all orders, with optimization to reduce database hits
+    # - "items__product": preloads each product in the order items
+    # - "user": preloads the user related to each order
+    queryset = Order.objects.prefetch_related("items__product", "user")
+
+    # Serializer used to convert Order instances into JSON
+    serializer_class = OrderSerializer
+
+    # Override get_queryset to filter orders by the current user
+    def get_queryset(self):
+        # Start with the base queryset defined above
+        qs = super().get_queryset()
+
+        # Return only the orders that belong to the logged-in user
+        return qs.filter(user=self.request.user)
+
+
 @api_view(["GET"])
 def product_info(request):
     products = Product.objects.all()
