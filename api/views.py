@@ -22,6 +22,11 @@ class ProductListAPIView(generics.ListAPIView):
     queryset = Product.objects.filter(stock__gt=0)  # Return products where stock is > 0
     serializer_class = ProductSerializer
 
+class ProductListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+
 
 class ProductDetailAPIView(generics.RetrieveAPIView):
     queryset = Product.objects.all()
