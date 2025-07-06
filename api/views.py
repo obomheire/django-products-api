@@ -1,4 +1,6 @@
-from django.db.models import Max
+from typing import Any
+
+from django.db.models import Max, QuerySet
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework.decorators import api_view
@@ -14,19 +16,17 @@ Class Base Generic Views
 """
 
 
-# # Use for Listing all products
-# class ProductListAPIView(generics.ListAPIView):
-#     # queryset = Product.objects.all() # Return all products
-#     # queryset = Product.objects.exclude(
-#     #     stock__gt=0
-#     # )  # Return products that are out of stock i.e where stock is 0
-#     queryset = Product.objects.filter(stock__gt=0)  # Return products where stock is > 0
-#     serializer_class = ProductSerializer
+# List and Create Product
 
-# Use for Listing andf creating products
 class ProductListCreateAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    
+    # Overide the list method to return product where stock > 0
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset().filter(stock__gt=0)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class ProductDetailAPIView(generics.RetrieveAPIView):
