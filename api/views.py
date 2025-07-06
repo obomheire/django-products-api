@@ -6,6 +6,10 @@ from rest_framework.response import Response
 from api.models import Order, OrderItem, Product
 from api.serializers import OrderSerializer, ProductInfoSerializer, ProductSerializer
 
+"""
+Function Base View
+"""
+
 
 @api_view(["GET"])
 def product_list(request):
