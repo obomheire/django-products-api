@@ -1,5 +1,5 @@
 """
-WSGI config for drf_course project.
+WSGI config for products project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'drf_course.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "products.settings")
 
 application = get_wsgi_application()

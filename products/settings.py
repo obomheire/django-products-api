@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "api",
     "rest_framework",
-    "silk"
+    "silk",
 ]
 
 MIDDLEWARE = [
@@ -49,7 +49,7 @@ MIDDLEWARE = [
     "silk.middleware.SilkyMiddleware",
 ]
 
-ROOT_URLCONF = "drf_course.urls"
+ROOT_URLCONF = "products.urls"
 
 TEMPLATES = [
     {
@@ -67,7 +67,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "drf_course.wsgi.application"
+WSGI_APPLICATION = "products.wsgi.application"
 
 
 # Database
