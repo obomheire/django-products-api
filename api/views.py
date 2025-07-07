@@ -10,6 +10,7 @@ from rest_framework.views import APIView
 
 from api.models import Order, OrderItem, Product
 from api.serializers import OrderSerializer, ProductInfoSerializer, ProductSerializer
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 
 """
 Class Base Generic Views
@@ -18,9 +19,27 @@ Class Base Generic Views
 
 # List and Create Product
 
+
+# class ProductListCreateAPIView(generics.ListCreateAPIView):
+#     queryset = Product.objects.all()
+#     serializer_class = ProductSerializer
+
+#     def get_permissions(self):
+#         self.permission_classes = [AllowAny]
+#         if self.request.method == "POST":
+#             self.permission_classes = [IsAdminUser]
+#         return super().get_permissions()
+
+
 class ProductListCreateAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+
+    def get_permissions(self):
+        # self.permission_classes = [AllowAny]
+        if self.request.method == "POST":
+            self.permission_classes = [IsAdminUser]
+        return super().get_permissions()
 
     # Overide the list method to return product where stock > 0
     def list(self, request, *args, **kwargs):

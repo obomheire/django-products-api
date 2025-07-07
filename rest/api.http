@@ -1,0 +1,27 @@
+GET http://localhost:8000/products/ HTTP/1.1
+Content-Type: application/json
+
+###
+
+POST http://localhost:8000/products/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "Product 1",
+    "description": "Description 1",
+    "price": 100,
+    "stock": 100
+}
+
+###
+GET http://localhost:8000/products/1/ HTTP/1.1
+Content-Type: application/json
+
+###
+
+GET http://localhost:8000/products/info/ HTTP/1.1
+Content-Type: application/json
+
+
+###
+GET http://localhost:8000/orders/ HTTP/1.1
