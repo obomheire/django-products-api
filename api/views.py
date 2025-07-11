@@ -11,6 +11,8 @@ from rest_framework.views import APIView
 from api.filters import ProductFilter
 from api.models import Order, OrderItem, Product
 from api.serializers import OrderSerializer, ProductInfoSerializer, ProductSerializer
+from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
 
 """
 Class Base Generic Views
@@ -36,6 +38,13 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     filterset_class = ProductFilter
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+    search_fields = ['name', 'description'] # To exactly match the name, add = before the name (['=name', 'description'])
+    ordering_fields = ['name', 'price', 'stock']
 
     def get_permissions(self):
         if self.request.method == "POST":
@@ -43,7 +52,7 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
         return super().get_permissions()
 
     def get_queryset(self):
-
+ 
         return (
             # super().get_queryset().filter(stock__gt=0)
             super()
@@ -99,4 +108,4 @@ class ProductInfoAPIView(APIView):
         )
         return Response(serializer.data)
 
-    # Continue from Video 16
+    # Continue from Video 17

@@ -1,12 +1,18 @@
-GET http://localhost:8000/products/?price__lte=18.99 HTTP/1.1
-Content-Type: application/json
-
-###
-
 GET http://localhost:8000/products/?price__range=5,100 HTTP/1.1
 Content-Type: application/json
 
 ###
+
+GET http://localhost:8000/products/?search=Scanner HTTP/1.1
+Content-Type: application/json
+
+###
+
+GET http://localhost:8000/products/?ordering=-name HTTP/1.1
+Content-Type: application/json
+
+###
+
 
 POST http://localhost:8000/products/ HTTP/1.1
 Content-Type: application/json
