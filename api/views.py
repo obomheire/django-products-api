@@ -64,8 +64,10 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
         return super().get_permissions()
 
     def get_queryset(self):
-        # Apply stock filter here so filters and pagination still work
-        return super().get_queryset().filter(stock__gt=0)
+
+        return (
+            super().get_queryset().filter(stock__gt=0)
+        )  # Apply stock filter here so filters and pagination still work
 
 
 # class ProductDetailAPIView(generics.RetrieveAPIView):
