@@ -48,10 +48,17 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
         return Response(serializer.data)
 
 
-class ProductDetailAPIView(generics.RetrieveAPIView):
+# class ProductDetailAPIView(generics.RetrieveAPIView):
+class ProductDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_url_kwarg = "product_id"
+
+    def get_permissions(self):
+        self.permission_classes = [AllowAny]
+        if self.request.method in ["PUT", "PATCH", "DELETE"]:
+            self.permission_classes = [IsAdminUser]
+        return super().get_permissions()
 
 
 class OrderListAPIView(generics.ListAPIView):
@@ -88,4 +95,4 @@ class ProductInfoAPIView(APIView):
         )
         return Response(serializer.data)
     
-    # Continue from Video 11
+    # Continue from Video 15
