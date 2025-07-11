@@ -142,6 +142,8 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": [
         "django_filters.rest_framework.DjangoFilterBackend"
     ],  # This ia a Generic Filtering, it applies to all the views (It could also be used at the individual view level)
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 5,
 }
 
 SPECTACULAR_SETTINGS = {

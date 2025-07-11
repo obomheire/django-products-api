@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 from api.filters import InStockFilterBackend, ProductFilter
 from api.models import Order, OrderItem, Product
 from api.serializers import OrderSerializer, ProductInfoSerializer, ProductSerializer
+from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
 
 """
 Class Base Generic Views
@@ -34,7 +35,7 @@ Class Base Generic Views
 
 
 class ProductListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Product.objects.all()
+    queryset = Product.objects.order_by("pk")
     serializer_class = ProductSerializer
     filterset_class = ProductFilter
     filter_backends = [
@@ -48,6 +49,12 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
         "description",
     ]  # To exactly match the name, add = before the name (['=name', 'description'])
     ordering_fields = ["name", "price", "stock"]
+    # pagination_class = LimitOffsetPagination
+    pagination_class = PageNumberPagination
+    pagination_class.page_size = 2
+    pagination_class.page_query_param = 'pagenum'
+    pagination_class.page_size_query_param = 'size'
+    pagination_class.max_page_size = 4
 
     def get_permissions(self):
         if self.request.method == "POST":
@@ -109,4 +116,4 @@ class ProductInfoAPIView(APIView):
         )
         return Response(serializer.data)
 
-    # Continue from Video 19
+    # Continue from Video 20
