@@ -23,6 +23,7 @@ Class Base Generic Views
 # class ProductListCreateAPIView(generics.ListCreateAPIView):
 #     queryset = Product.objects.all()
 #     serializer_class = ProductSerializer
+#     filterset_fields = ("name", "price") # Filtering by name and price
 
 #     def get_permissions(self):
 #         self.permission_classes = [AllowAny]
@@ -31,21 +32,40 @@ Class Base Generic Views
 #         return super().get_permissions()
 
 
+# class ProductListCreateAPIView(generics.ListCreateAPIView):
+#     queryset = Product.objects.all()
+#     serializer_class = ProductSerializer
+#     filterset_fields = ("name", "price") # Filtering by name and price
+
+#     def get_permissions(self):
+#         # self.permission_classes = [AllowAny]
+#         if self.request.method == "POST":
+#             self.permission_classes = [IsAdminUser]
+#         return super().get_permissions()
+
+#     # Overide the list method to return product where stock > 0
+#     def list(self, request, *args, **kwargs):
+#         queryset = self.get_queryset().filter(stock__gt=0)
+#         serializer = self.get_serializer(queryset, many=True)
+#         return Response(serializer.data)
+
+
 class ProductListCreateAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    filterset_fields = (
+        "name",
+        "price",
+    )  # This enables filtering via ?name=...&price=...
 
     def get_permissions(self):
-        # self.permission_classes = [AllowAny]
         if self.request.method == "POST":
             self.permission_classes = [IsAdminUser]
         return super().get_permissions()
 
-    # Overide the list method to return product where stock > 0
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset().filter(stock__gt=0)
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+    def get_queryset(self):
+        # Apply stock filter here so filters and pagination still work
+        return super().get_queryset().filter(stock__gt=0)
 
 
 # class ProductDetailAPIView(generics.RetrieveAPIView):
@@ -95,4 +115,4 @@ class ProductInfoAPIView(APIView):
         )
         return Response(serializer.data)
     
-    # Continue from Video 15
+    # Continue from Video 16
