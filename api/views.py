@@ -3,7 +3,7 @@ from typing import Any
 from django.db.models import Max, QuerySet
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, generics
+from rest_framework import filters, generics, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
@@ -35,7 +35,8 @@ Class Base Generic Views
 
 
 class ProductListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Product.objects.order_by("pk")
+    # queryset = Product.objects.all()
+    queryset = Product.objects.order_by("pk") # To solve :  UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'api.models.Product'> QuerySet.
     serializer_class = ProductSerializer
     filterset_class = ProductFilter
     filter_backends = [
@@ -81,6 +82,42 @@ class ProductDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
             self.permission_classes = [IsAdminUser]
         return super().get_permissions()
 
+
+# class OrderListAPIView(generics.ListAPIView):
+#     queryset = Order.objects.prefetch_related(
+#         "items__product", "user"
+#     )  # Also prefetch related objects to avoid N+1 queries
+#     serializer_class = OrderSerializer
+
+
+# class UserOrderListAPIView(generics.ListAPIView):
+#     queryset = Order.objects.prefetch_related(
+#         "items__product", "user"
+#     )  # Also prefetch related objects to avoid N+1 queries
+#     serializer_class = OrderSerializer
+#     permission_classes = [IsAuthenticated]
+
+#     # Override get_queryset to filter orders by the current user
+#     def get_queryset(self):
+#         qs = super().get_queryset()  ## Start with the base queryset defined above
+
+#         return qs.filter(user=self.request.user)
+
+"""
+Class Base ViewSet (ViewSet allows creation of CRUD operations in a single class)
+"""
+
+class OrderViewSet(viewsets.ModelViewSet):
+    # queryset = Order.objects.prefetch_related("items__product")
+    queryset = Order.objects.prefetch_related("items__product").order_by("pk") # To solve :  UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'api.models.Order'> QuerySet.
+    serializer_class = OrderSerializer
+    permission_classes = [AllowAny]
+    # permission_classes = [IsAuthenticated]
+    pagination_class = None 
+
+    # Continue from Video 20
+
+g
 """
 Class Base API View
 """
@@ -97,22 +134,3 @@ class ProductInfoAPIView(APIView):
             }
         )
         return Response(serializer.data)
-
-
-class OrderListAPIView(generics.ListAPIView):
-    queryset = Order.objects.prefetch_related("items__product", "user") # Also prefetch related objects to avoid N+1 queries
-    serializer_class = OrderSerializer
-
-
-class UserOrderListAPIView(generics.ListAPIView):
-    queryset = Order.objects.prefetch_related("items__product", "user") # Also prefetch related objects to avoid N+1 queries
-    serializer_class = OrderSerializer
-    permission_classes = [IsAuthenticated]
-
-    # Override get_queryset to filter orders by the current user
-    def get_queryset(self):
-        qs = super().get_queryset()  ## Start with the base queryset defined above
-
-        return qs.filter(user=self.request.user)
-
-    # Continue from Video 20
