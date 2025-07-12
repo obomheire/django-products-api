@@ -125,7 +125,7 @@ class OrderViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
 
     @action(
-        detail=False,g
+        detail=False,
         methods=["get"],
         url_path="user-orders",
         # permission_classes=[IsAuthenticated], # To restrict the access to the user-orders endpoint to only authenticated users
