@@ -118,17 +118,17 @@ class OrderViewSet(viewsets.ModelViewSet):
         "pk"
     )  # To solve :  UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'api.models.Order'> QuerySet.
     serializer_class = OrderSerializer
-    # permission_classes = [AllowAny]
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [AllowAny] # To allow the access to the CRUD operations on the orders endpoint to any user
+    permission_classes = [IsAuthenticated]  # To restrict the access to the CRUD operations on the orders endpoint to only authenticated users
     pagination_class = None
     filterset_class = OrderFilter
     filter_backends = [DjangoFilterBackend]
 
     @action(
-        detail=False,
+        detail=False,g
         methods=["get"],
         url_path="user-orders",
-        # permission_classes=[IsAuthenticated],
+        # permission_classes=[IsAuthenticated], # To restrict the access to the user-orders endpoint to only authenticated users
     )
     def user_orders(self, request):
         orders = self.get_queryset().filter(user=request.user)
