@@ -10,9 +10,11 @@ from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.filters import InStockFilterBackend, ProductFilter
+from api.filters import InStockFilterBackend, OrderFilter, ProductFilter
 from api.models import Order, OrderItem, Product
 from api.serializers import OrderSerializer, ProductInfoSerializer, ProductSerializer
+from rest_framework.decorators import action
+
 
 """
 Class Base Generic Views
@@ -36,7 +38,9 @@ Class Base Generic Views
 
 class ProductListCreateAPIView(generics.ListCreateAPIView):
     # queryset = Product.objects.all()
-    queryset = Product.objects.order_by("pk") # To solve :  UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'api.models.Product'> QuerySet.
+    queryset = Product.objects.order_by(
+        "pk"
+    )  # To solve :  UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'api.models.Product'> QuerySet.
     serializer_class = ProductSerializer
     filterset_class = ProductFilter
     filter_backends = [
@@ -107,15 +111,30 @@ class ProductDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 Class Base ViewSet (ViewSet allows creation of CRUD operations in a single class)
 """
 
+
 class OrderViewSet(viewsets.ModelViewSet):
     # queryset = Order.objects.prefetch_related("items__product")
-    queryset = Order.objects.prefetch_related("items__product").order_by("pk") # To solve :  UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'api.models.Order'> QuerySet.
+    queryset = Order.objects.prefetch_related("items__product").order_by(
+        "pk"
+    )  # To solve :  UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'api.models.Order'> QuerySet.
     serializer_class = OrderSerializer
-    permission_classes = [AllowAny]
-    # permission_classes = [IsAuthenticated]
-    pagination_class = None 
+    # permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    pagination_class = None
+    filterset_class = OrderFilter
+    filter_backends = [DjangoFilterBackend]
 
-    # Continue from Video 20
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="user-orders",
+        # permission_classes=[IsAuthenticated],
+    )
+    def user_orders(self, request):
+        orders = self.get_queryset().filter(user=request.user)
+        serializer = self.get_serializer(orders, many=True)
+        return Response(serializer.data)
+
 
 """
 Class Base API View
@@ -133,3 +152,5 @@ class ProductInfoAPIView(APIView):
             }
         )
         return Response(serializer.data)
+
+        # Continue from Video 21
