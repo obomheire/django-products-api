@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, generics
 from rest_framework.decorators import api_view
+from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -12,7 +13,6 @@ from rest_framework.views import APIView
 from api.filters import InStockFilterBackend, ProductFilter
 from api.models import Order, OrderItem, Product
 from api.serializers import OrderSerializer, ProductInfoSerializer, ProductSerializer
-from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
 
 """
 Class Base Generic Views
@@ -52,8 +52,8 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
     # pagination_class = LimitOffsetPagination
     pagination_class = PageNumberPagination
     pagination_class.page_size = 2
-    pagination_class.page_query_param = 'pagenum'
-    pagination_class.page_size_query_param = 'size'
+    pagination_class.page_query_param = "pagenum"
+    pagination_class.page_size_query_param = "size"
     pagination_class.max_page_size = 4
 
     def get_permissions(self):
@@ -81,24 +81,6 @@ class ProductDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
             self.permission_classes = [IsAdminUser]
         return super().get_permissions()
 
-
-class OrderListAPIView(generics.ListAPIView):
-    queryset = Order.objects.prefetch_related("items__product", "user")
-    serializer_class = OrderSerializer
-
-
-class UserOrderListAPIView(generics.ListAPIView):
-    queryset = Order.objects.prefetch_related("items__product", "user")
-    serializer_class = OrderSerializer
-    permission_classes = [IsAuthenticated]
-
-    # Override get_queryset to filter orders by the current user
-    def get_queryset(self):
-        qs = super().get_queryset()  ## Start with the base queryset defined above
-
-        return qs.filter(user=self.request.user)
-
-
 """
 Class Base API View
 """
@@ -115,5 +97,22 @@ class ProductInfoAPIView(APIView):
             }
         )
         return Response(serializer.data)
+
+
+class OrderListAPIView(generics.ListAPIView):
+    queryset = Order.objects.prefetch_related("items__product", "user") # Also prefetch related objects to avoid N+1 queries
+    serializer_class = OrderSerializer
+
+
+class UserOrderListAPIView(generics.ListAPIView):
+    queryset = Order.objects.prefetch_related("items__product", "user") # Also prefetch related objects to avoid N+1 queries
+    serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated]
+
+    # Override get_queryset to filter orders by the current user
+    def get_queryset(self):
+        qs = super().get_queryset()  ## Start with the base queryset defined above
+
+        return qs.filter(user=self.request.user)
 
     # Continue from Video 20
