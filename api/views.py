@@ -104,7 +104,7 @@ class ProductDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 #         return qs.filter(user=self.request.user)
 
 """
-Class Base ViewSet (ViewSet allows creation of CRUD operations in a single class.)
+Class Base ViewSet (ViewSet allows creation of CRUD operations in a single class)
 """
 
 class OrderViewSet(viewsets.ModelViewSet):
@@ -117,7 +117,6 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     # Continue from Video 20
 
-g
 """
 Class Base API View
 """
