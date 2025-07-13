@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 from api.filters import InStockFilterBackend, OrderFilter, ProductFilter
+from django.views.decorators.vary import vary_on_headers
 from api.models import Order, OrderItem, Product, User
 from api.serializers import (
     OrderCreateSerializer,
@@ -76,6 +77,7 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
 # docker run --name django-redis -d -p 6379:6379 --rm redis # To run the redis container
 # docker ps # To check if the redis container is running
 
+    # Overriding the list method to cache the product list for 15 minutes (60 * 15 = 900 seconds = 15 minutes)
     @method_decorator(cache_page(60 * 15, key_prefix='product_list'))
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
@@ -85,7 +87,7 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
         import time
         time.sleep(2)
         return super().get_queryset()   
-
+ 
     def get_permissions(self):
         if self.request.method == "POST":
             self.permission_classes = [IsAdminUser]
@@ -152,6 +154,11 @@ class OrderViewSet(viewsets.ModelViewSet):
     filterset_class = OrderFilter
     filter_backends = [DjangoFilterBackend]
 
+    @method_decorator(cache_page(60 * 15, key_prefix='order_list'))
+    @method_decorator(vary_on_headers("Authorization")) # To vary the cache based on the Authorization header
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)   
+
     # Pass the current user to the serializer
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -199,4 +206,4 @@ class ProductInfoAPIView(APIView):
         )
         return Response(serializer.data)
 
-        # Continue from Video 26
+        # Continue from Video 27

@@ -159,8 +159,18 @@ CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://127.0.0.1:6379/1",
-        "OPTIONS": {
+        "OPTIONS": { 
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
     }
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),  # 1 hour access token
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),  # 7 days refresh token
+    # "ROTATE_REFRESH_TOKENS": False,  # Set True if you want refresh tokens to change on use
+    # "BLACKLIST_AFTER_ROTATION": False,  # Use with token blacklisting (optional)
+    # "ALGORITHM": "HS256",  # Algorithm to use for signing the tokens
+    # "SIGNING_KEY": SECRET_KEY,  # Use your Django SECRET_KEY
+    # "AUTH_HEADER_TYPES": ("Bearer",),  # Accept Authorization: Bearer <token>
 }

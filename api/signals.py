@@ -13,3 +13,7 @@ def invalidate_product_cache(sender, instance, **kwargs):
 
     # Clear product list caches
     cache.delete_pattern("*product_list*") # Clear all product list caches with the pattern *product_list* from the cache
+
+
+# Impliment cache invalidation for the order list
+
