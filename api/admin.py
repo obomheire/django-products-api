@@ -1,5 +1,5 @@
 from django.contrib import admin
-from api.models import Order, OrderItem, User
+from api.models import Order, OrderItem, Product, User
 
 
 # Inline admin descriptor for OrderItem model
@@ -19,3 +19,4 @@ class OrderAdmin(admin.ModelAdmin):
 # Register the customized Order admin with the site
 admin.site.register(Order, OrderAdmin)
 admin.site.register(User)
+admin.site.register(Product)
