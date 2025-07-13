@@ -66,17 +66,17 @@ Content-Type: application/json
 
 ###
 GET http://localhost:8000/orders/ HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUyMzU5Nzk1LCJpYXQiOjE3NTIzNTk0OTUsImp0aSI6IjZhZDVkZWU2Zjg5MDQ4MDE4NjA3ODM4MWZkZWNhMWE0IiwidXNlcl9pZCI6MX0.bBXZJHauzAj_sXLET3Bfo00udareD1of4G2aAvJpUIQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUyMzkyNDgzLCJpYXQiOjE3NTIzOTIxODMsImp0aSI6ImZmMzVmODk1OWRlODRhMWM5OTQ2MjVlYzhlYjY5NTZkIiwidXNlcl9pZCI6Mn0.E9SvkTcSEHdFDMiIg8_od9Hgla8kfn47BiWEiO5AMfQ
 
 ###
 POST http://localhost:8000/api/token/ HTTP/1.1
 Content-Type: application/json
 
 {
-    # "username": "obomheire",
-    # "password": "Secret@123",
-    "username": "admin",
-    "password": "test"
+    "username": "obomheire",
+    "password": "Secret@123"
+    # "username": "admin",
+    # "password": "test"
 }
 
 ###
@@ -87,4 +87,13 @@ Content-Type: application/json
     "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1MjI5OTk3MywiaWF0IjoxNzUyMjEzNTczLCJqdGkiOiI5MzVlYmI5N2ZhMjU0ZmU0OThiYTk3ZmNmNjhlNWY1MyIsInVzZXJfaWQiOjF9.NEvesl9vtKKXenUpJB7sjFHyck3jSjZ33A8sVbqVhVU"
 }
 
+###
+POST http://localhost:8000/orders/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUyMzkyNDgzLCJpYXQiOjE3NTIzOTIxODMsImp0aSI6ImZmMzVmODk1OWRlODRhMWM5OTQ2MjVlYzhlYjY5NTZkIiwidXNlcl9pZCI6Mn0.E9SvkTcSEHdFDMiIg8_od9Hgla8kfn47BiWEiO5AMfQ
+
+{
+    "status": "Pending",
+    "items": [{"product": 1, "quantity": 5}, {"product": 2, "quantity": 8}]
+}
 ###

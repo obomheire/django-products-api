@@ -12,7 +12,7 @@ from rest_framework.views import APIView
 
 from api.filters import InStockFilterBackend, OrderFilter, ProductFilter
 from api.models import Order, OrderItem, Product
-from api.serializers import OrderSerializer, ProductInfoSerializer, ProductSerializer
+from api.serializers import OrderCreateSerializer, OrderSerializer, ProductInfoSerializer, ProductSerializer
 from rest_framework.decorators import action
 
 
@@ -124,6 +124,16 @@ class OrderViewSet(viewsets.ModelViewSet):
     filterset_class = OrderFilter
     filter_backends = [DjangoFilterBackend]
 
+    # Pass the current user to the serializer
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def get_serializer_class(self):
+        # can also check if POST: if self.request.method == 'POST'
+        if self.action == "create":
+            return OrderCreateSerializer
+        return super().get_serializer_class()
+
     # Allow admin to perform CRUD operations on all orders, and users to perform CRUD operations on their own orders
     def get_queryset(self):
         qs = super().get_queryset()
@@ -160,4 +170,4 @@ class ProductInfoAPIView(APIView):
         )
         return Response(serializer.data)
 
-        # Continue from Video 22
+        # Continue from Video 23
