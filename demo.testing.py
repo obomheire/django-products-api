@@ -24,7 +24,11 @@ validated_data = {
 
 
 def create(validated_data):
-    orderitem_data = validated_data.pop("items")
+    if "items" in validated_data:
+        orderitem_data = validated_data.pop("items")
+    else:
+        orderitem_data = None
+
     print("Order Item Data:")
     print(orderitem_data)
     print("Order Data:")

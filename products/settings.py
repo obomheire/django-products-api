@@ -3,6 +3,7 @@ import os
 import dotenv
 
 dotenv.load_dotenv()
+from datetime import timedelta
 from pathlib import Path
 
 import dj_database_url
@@ -132,6 +133,16 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "api.User"
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),  # ⏱ Access token valid for 1 hour
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),  # 🔁 Refresh token valid for 7 days
+    "ROTATE_REFRESH_TOKENS": False,  # Set True if you want refresh tokens to change on use
+    "BLACKLIST_AFTER_ROTATION": False,  # Use with token blacklisting (optional)
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,  # Use your Django SECRET_KEY
+    "AUTH_HEADER_TYPES": ("Bearer",),  # Accept Authorization: Bearer <token>
+}
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [

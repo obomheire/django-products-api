@@ -129,8 +129,9 @@ class OrderViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
     def get_serializer_class(self):
-        # can also check if POST: if self.request.method == 'POST'
-        if self.action == "create":
+        # Can also check if POST: if self.request.method == 'POST'
+        # Can also check if PUT or PATCH: if self.request.method in ['PUT', 'PATCH']
+        if self.action == "create" or self.action == "update":
             return OrderCreateSerializer
         return super().get_serializer_class()
 
@@ -170,4 +171,4 @@ class ProductInfoAPIView(APIView):
         )
         return Response(serializer.data)
 
-        # Continue from Video 23
+        # Continue from Video 24

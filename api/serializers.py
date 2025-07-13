@@ -1,7 +1,6 @@
 from rest_framework import serializers
-
+from django.db import transaction
 from .models import Order, OrderItem, Product, User
-
 
 
 # List of users serializer
@@ -56,16 +55,39 @@ class OrderCreateSerializer(serializers.ModelSerializer):
             fields = ("product", "quantity")
 
     order_id = serializers.UUIDField(read_only=True)
-    items = OrderItemCreateSerializer(many=True)
+    items = OrderItemCreateSerializer(many=True, required=False)
+
+    def update(self, instance, validated_data):
+        if "items" in validated_data:
+            orderitem_data = validated_data.pop('items') # Get the items from the validated_data dictionary
+        else:
+            orderitem_data = None
+
+        with transaction.atomic():  # Ensure that the entire update operation is atomic — if any part fails, all changes are rolled back
+            instance = super().update(instance, validated_data)# Update the order
+
+            if orderitem_data is not None:
+                # Clear existing items (optional, depends on requirements)
+                instance.items.all().delete() # Delete the existing items
+
+                # Recreate items with the updated data
+                for item in orderitem_data:
+                    OrderItem.objects.create(order=instance, **item) # Create the order items
+        return instance
 
     def create(self, validated_data):
-        orderitem_data = validated_data.pop("items")
-        order = Order.objects.create(**validated_data)
+        if "items" in validated_data:
+            orderitem_data = validated_data.pop("items") # Get the items data
+        else:
+            orderitem_data = None
 
-        for item in orderitem_data:
-            OrderItem.objects.create(order=order, **item)
+        with transaction.atomic():  # Ensure that the entire create operation is atomic — if any part fails, all changes are rolled back
+            order = Order.objects.create(**validated_data) # Create the order
 
-        return order
+            for item in orderitem_data:
+                OrderItem.objects.create(order=order, **item) # Create the order items
+
+            return order
 
     class Meta:
         model = Order
