@@ -14,6 +14,7 @@ from django.utils.decorators import method_decorator
 from api.filters import InStockFilterBackend, OrderFilter, ProductFilter
 from django.views.decorators.vary import vary_on_headers
 from api.models import Order, OrderItem, Product, User
+from rest_framework.throttling import ScopedRateThrottle
 from api.serializers import (
     OrderCreateSerializer,
     OrderSerializer,
@@ -49,6 +50,8 @@ class UserListView(generics.ListAPIView):
 
 
 class ProductListCreateAPIView(generics.ListCreateAPIView):
+    throttle_scope = "products" # To throttle the requests for products
+    throttle_classes = [ScopedRateThrottle] # This could also be done in the settings.py file globally
     # queryset = Product.objects.all()
     queryset = Product.objects.order_by(
         "pk"
@@ -141,6 +144,8 @@ Class Base ViewSet (ViewSet allows creation of CRUD operations in a single class
 
 
 class OrderViewSet(viewsets.ModelViewSet):
+    throttle_scope = "orders" # To throttle the requests for orders
+    throttle_classes = [ScopedRateThrottle] # This could also be done in the settings.py file globally
     # queryset = Order.objects.prefetch_related("items__product")
     queryset = Order.objects.prefetch_related("items__product").order_by(
         "pk"
@@ -206,4 +211,4 @@ class ProductInfoAPIView(APIView):
         )
         return Response(serializer.data)
 
-        # Continue from Video 27
+        # Continue from Video 29

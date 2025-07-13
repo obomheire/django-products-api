@@ -146,6 +146,21 @@ REST_FRAMEWORK = {
     ],  # This ia a Generic Filtering, it applies to all the views (It could also be used at the individual view level)
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 5,
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",  # To throttle the requests for anonymous users
+        # "rest_framework.throttling.UserRateThrottle", # To throttle the requests for authenticated users
+        # "api.throttles.BurstRateThrottle", # To throttle the requests for burst (UserRateThrottle)
+        # "api.throttles.SustainedRateThrottle", # To throttle the requests for sustained (UserRateThrottle)
+        "rest_framework.throttling.ScopedRateThrottle", # To throttle the requests for scoped (UserRateThrottle)
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "2/minute",  # 2 requests per minute for anonymous users
+        # "user": "4/minute", # 4 requests per minute for authenticated users
+        # "burst": "10/minute",  # 10 requests per minute for burst (UserRateThrottle)
+        # "sustained": "15/hour",  # 15 requests per hour for sustained (UserRateThrottle)
+        "products": "2/minute",  # 2 requests per minute for products
+        "orders": "4/minute",  # 4 requests per minute for orders
+    },
 }
 
 SPECTACULAR_SETTINGS = {
@@ -159,7 +174,7 @@ CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://127.0.0.1:6379/1",
-        "OPTIONS": { 
+        "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
     }
