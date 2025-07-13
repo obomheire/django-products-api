@@ -4,21 +4,31 @@ from django.db.models import Max, QuerySet
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, generics, viewsets
-from rest_framework.decorators import api_view
+from rest_framework.decorators import action, api_view
 from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.filters import InStockFilterBackend, OrderFilter, ProductFilter
-from api.models import Order, OrderItem, Product
-from api.serializers import OrderCreateSerializer, OrderSerializer, ProductInfoSerializer, ProductSerializer
-from rest_framework.decorators import action
-
+from api.models import Order, OrderItem, Product, User
+from api.serializers import (
+    OrderCreateSerializer,
+    OrderSerializer,
+    ProductInfoSerializer,
+    ProductSerializer,
+    UserSerializer,
+)
 
 """
 Class Base Generic Views
 """
+
+# List of users
+class UserListView(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    pagination_class = None
 
 
 # List and Create Product
@@ -107,6 +117,7 @@ class ProductDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 #         return qs.filter(user=self.request.user)
 
+
 """
 Class Base ViewSet (ViewSet allows creation of CRUD operations in a single class)
 """
@@ -119,7 +130,9 @@ class OrderViewSet(viewsets.ModelViewSet):
     )  # To solve :  UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'api.models.Order'> QuerySet.
     serializer_class = OrderSerializer
     # permission_classes = [AllowAny] # To allow the access to the CRUD operations on the orders endpoint to any user
-    permission_classes = [IsAuthenticated]  # To restrict the access to the CRUD operations on the orders endpoint to only authenticated users
+    permission_classes = [
+        IsAuthenticated
+    ]  # To restrict the access to the CRUD operations on the orders endpoint to only authenticated users
     pagination_class = None
     filterset_class = OrderFilter
     filter_backends = [DjangoFilterBackend]
@@ -171,4 +184,4 @@ class ProductInfoAPIView(APIView):
         )
         return Response(serializer.data)
 
-        # Continue from Video 24
+        # Continue from Video 26

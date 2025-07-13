@@ -7,7 +7,9 @@ from .models import Order, OrderItem, Product, User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "username", "email")  # customize as needed
+        # exclude = ("password", "user_permissions")
+        fields = ("id", "username", "email", "is_staff", "is_active", "is_superuser", "is_authenticated", "get_full_name", "orders")  # customize as needed
+        # fields = "__all__"
 
 
 # List and create products serializerg
